@@ -1,0 +1,13 @@
+services:
+  oneview-exporter:
+    build: .
+    container_name: oneview-exporter
+    restart: unless-stopped
+    ports:
+      - "9130:9130"
+    env_file: .env
+    # Uncomment to mount a custom CA bundle
+    # volumes:
+    #   - ./ca-chain.pem:/etc/ssl/certs/ca-chain.pem:ro
+    # environment:
+    #   TLS_CA_BUNDLE: /etc/ssl/certs/ca-chain.pem

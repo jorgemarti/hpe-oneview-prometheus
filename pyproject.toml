@@ -1,0 +1,12 @@
+[project]
+name = "hpe-oneview-prometheus"
+version = "1.0.0"
+description = "Prometheus exporter for HPE OneView v9.30"
+requires-python = ">=3.11"
+dependencies = [
+    "prometheus_client>=0.21,<1.0",
+    "requests>=2.31,<3.0",
+]
+
+[project.scripts]
+oneview-exporter = "oneview_exporter.main:main"

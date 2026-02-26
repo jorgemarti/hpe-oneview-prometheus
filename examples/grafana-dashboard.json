@@ -1,0 +1,111 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Exporter Health",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "oneview_scrape_success", "legendFormat": "Scrape Success", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "FAIL", "color": "red" }, "1": { "text": "OK", "color": "green" } } }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Scrape Duration",
+      "type": "gauge",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "oneview_scrape_duration_seconds", "legendFormat": "", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s", "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 15 }, { "color": "red", "value": 30 }] } },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Active Alerts by Severity",
+      "type": "bargauge",
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "oneview_active_alerts", "legendFormat": "{{ severity }}", "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": { "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 }] } },
+        "overrides": []
+      }
+    },
+    {
+      "title": "Server Hardware Status",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
+      "targets": [
+        { "expr": "oneview_server_hardware_status", "legendFormat": "", "refId": "A", "format": "table", "instant": true }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true, "job": true, "instance": true, "uri": true }, "renameByName": { "name": "Server", "model": "Model", "serial_number": "Serial", "Value": "Status" } } }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Status" }, "properties": [{ "id": "mappings", "value": [{ "type": "value", "options": { "0": { "text": "Unknown" }, "1": { "text": "OK", "color": "green" }, "2": { "text": "Warning", "color": "yellow" }, "3": { "text": "Critical", "color": "red" }, "4": { "text": "Disabled", "color": "gray" } } }] }] }
+        ]
+      }
+    },
+    {
+      "title": "Server CPU Utilization",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "oneview_server_hardware_cpu_utilization_percent", "legendFormat": "{{ name }}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 }, "overrides": [] }
+    },
+    {
+      "title": "Server Power Consumption",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        { "expr": "oneview_server_hardware_average_power_watts", "legendFormat": "{{ name }}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "watt" }, "overrides": [] }
+    },
+    {
+      "title": "Server Ambient Temperature",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [
+        { "expr": "oneview_server_hardware_ambient_temperature_celsius", "legendFormat": "{{ name }}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "celsius", "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 30 }, { "color": "red", "value": 35 }] }, "custom": { "thresholdsStyle": { "mode": "line" } } }, "overrides": [] }
+    },
+    {
+      "title": "Enclosure Power Consumption",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "targets": [
+        { "expr": "oneview_enclosure_average_power_watts", "legendFormat": "avg {{ name }}", "refId": "A" },
+        { "expr": "oneview_enclosure_peak_power_watts", "legendFormat": "peak {{ name }}", "refId": "B" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "watt" }, "overrides": [] }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["oneview", "hardware"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "HPE OneView Hardware",
+  "uid": "oneview-hardware",
+  "version": 1
+}

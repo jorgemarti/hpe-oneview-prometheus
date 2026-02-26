@@ -1,0 +1,57 @@
+# Grafana alert rules for OneView hardware monitoring.
+# Import these via Grafana UI (Alerting > Alert rules > Import) or provision them.
+
+groups:
+  - name: OneView Hardware
+    folder: OneView
+    interval: 1m
+    rules:
+      - alert: OneViewServerHardwareDegraded
+        expr: oneview_server_hardware_status >= 2
+        for: 5m
+        labels:
+          severity: critical
+          source: oneview
+        annotations:
+          summary: "OneView server {{ $labels.name }} health is degraded (status={{ $value }})"
+          description: "Server {{ $labels.name }} ({{ $labels.model }}, S/N {{ $labels.serial_number }}) has been in a non-OK state for more than 5 minutes."
+
+      - alert: OneViewServerTemperatureHigh
+        expr: oneview_server_hardware_ambient_temperature_celsius > 35
+        for: 10m
+        labels:
+          severity: warning
+          source: oneview
+        annotations:
+          summary: "OneView server {{ $labels.name }} temperature is {{ $value }}°C"
+          description: "Ambient temperature on {{ $labels.name }} has exceeded 35°C for 10 minutes."
+
+      - alert: OneViewCriticalAlerts
+        expr: oneview_active_alerts{severity="Critical"} > 0
+        for: 2m
+        labels:
+          severity: critical
+          source: oneview
+        annotations:
+          summary: "{{ $value }} active Critical alerts in OneView"
+          description: "There are {{ $value }} unresolved Critical alerts in HPE OneView."
+
+      - alert: OneViewEnclosureDegraded
+        expr: oneview_enclosure_status >= 2
+        for: 5m
+        labels:
+          severity: critical
+          source: oneview
+        annotations:
+          summary: "OneView enclosure {{ $labels.name }} health is degraded"
+          description: "Enclosure {{ $labels.name }} (S/N {{ $labels.serial_number }}) has been in a non-OK state for more than 5 minutes."
+
+      - alert: OneViewExporterDown
+        expr: oneview_scrape_success == 0
+        for: 5m
+        labels:
+          severity: warning
+          source: oneview
+        annotations:
+          summary: "OneView exporter is failing to poll"
+          description: "The OneView Prometheus exporter has been unable to reach the OneView API for 5 minutes."
