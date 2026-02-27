@@ -85,6 +85,7 @@ All settings are via environment variables (see `.env.example`):
 | `EXPORTER_PORT` | `9130` | HTTP port for `/metrics` |
 | `TLS_CA_BUNDLE` | | Path to a CA bundle PEM for OneView HTTPS |
 | `TLS_INSECURE` | `false` | Skip TLS verification (development only) |
+| `LOG_LEVEL` | `INFO` | Log verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`. Use `DEBUG` for full stack traces. |
 
 ## Metrics
 
@@ -104,6 +105,7 @@ All settings are via environment variables (see `.env.example`):
 | `oneview_enclosure_peak_power_watts` | name | Enclosure peak power (W) |
 | `oneview_interconnect_status` | name, model, serial_number, uri | Interconnect health status |
 | `oneview_active_alerts` | severity | Active alert count by severity |
+| `oneview_alert_active` | severity, description, corrective_action, resource_name, resource_category, resource_uri, alert_uri | Individual active alert (value=1). Labels carry alert detail for routing to the responsible team. |
 | `oneview_scrape_duration_seconds` | | Time spent polling OneView |
 | `oneview_scrape_success` | | 1 if the last poll succeeded, 0 otherwise |
 

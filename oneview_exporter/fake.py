@@ -76,7 +76,40 @@ class FakeOneViewClient:
 
     def get_active_alerts(self) -> list[dict]:
         return [
-            {"severity": "Warning", "alertState": "Active"},
-            {"severity": "Warning", "alertState": "Active"},
-            {"severity": "Critical", "alertState": "Active"},
+            {
+                "uri": "/rest/alerts/fake-001",
+                "severity": "Warning",
+                "alertState": "Active",
+                "description": "The server hardware health status is degraded.",
+                "correctiveAction": "Check the server hardware health in OneView.",
+                "associatedResource": {
+                    "resourceName": "srv-rack01-01",
+                    "resourceCategory": "server-hardware",
+                    "resourceUri": "/rest/server-hardware/fake-0000",
+                },
+            },
+            {
+                "uri": "/rest/alerts/fake-002",
+                "severity": "Warning",
+                "alertState": "Active",
+                "description": "Firmware update available for server hardware.",
+                "correctiveAction": "Apply the latest firmware using SPP.",
+                "associatedResource": {
+                    "resourceName": "srv-rack02-01",
+                    "resourceCategory": "server-hardware",
+                    "resourceUri": "/rest/server-hardware/fake-0003",
+                },
+            },
+            {
+                "uri": "/rest/alerts/fake-003",
+                "severity": "Critical",
+                "alertState": "Active",
+                "description": "Power supply redundancy lost.",
+                "correctiveAction": "Replace the failed power supply immediately.",
+                "associatedResource": {
+                    "resourceName": "srv-rack01-02",
+                    "resourceCategory": "server-hardware",
+                    "resourceUri": "/rest/server-hardware/fake-0001",
+                },
+            },
         ]

@@ -112,8 +112,9 @@ class OneViewCollector:
                 self._cache.interconnects = interconnects
                 self._cache.active_alerts = active_alerts
 
-        except Exception:
-            logger.exception("Poll cycle failed")
+        except Exception as exc:
+            logger.error("Poll cycle failed — %s", exc)
+            logger.debug("Poll cycle failed", exc_info=True)
             success = False
 
         elapsed = time.monotonic() - t0
@@ -128,8 +129,10 @@ class OneViewCollector:
             with self._cache.lock:
                 self._cache.api_request_counts[(label, "ok")] += 1
             return result
-        except Exception:
-            logger.exception("API call failed: %s", label)
+        except Exception as exc:
+            # One-liner at ERROR; full traceback only at DEBUG
+            logger.error("API call failed: %s — %s", label, exc)
+            logger.debug("API call failed: %s", label, exc_info=True)
             with self._cache.lock:
                 self._cache.api_request_counts[(label, "error")] += 1
             return [] if "utilization" not in label else {}
@@ -343,3 +346,35 @@ class OneViewCollector:
         for sev in SEVERITY_LEVELS:
             g.add_metric([sev], counts[sev])
         yield g
+
+        # Individual active alerts with detail labels.
+        # Cardinality is bounded by the number of *currently active* alerts,
+        # which is typically small.  Alerts disappear once cleared.
+        alert_fam = GaugeMetricFamily(
+            "oneview_alert_active",
+            "Active alert. Value is always 1; labels carry detail.",
+            labels=[
+                "severity",
+                "description",
+                "corrective_action",
+                "resource_name",
+                "resource_category",
+                "resource_uri",
+                "alert_uri",
+            ],
+        )
+        for alert in active_alerts:
+            assoc = alert.get("associatedResource", {})
+            alert_fam.add_metric(
+                [
+                    alert.get("severity", "Unknown"),
+                    alert.get("description", ""),
+                    alert.get("correctiveAction", ""),
+                    assoc.get("resourceName", ""),
+                    assoc.get("resourceCategory", ""),
+                    assoc.get("resourceUri", ""),
+                    alert.get("uri", ""),
+                ],
+                1,
+            )
+        yield alert_fam

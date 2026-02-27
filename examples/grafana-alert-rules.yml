@@ -26,15 +26,20 @@ groups:
           summary: "OneView server {{ $labels.name }} temperature is {{ $value }}°C"
           description: "Ambient temperature on {{ $labels.name }} has exceeded 35°C for 10 minutes."
 
-      - alert: OneViewCriticalAlerts
-        expr: oneview_active_alerts{severity="Critical"} > 0
+      - alert: OneViewAlertActive
+        expr: oneview_alert_active == 1
         for: 2m
         labels:
-          severity: critical
           source: oneview
+          ob_team: "Hardware Support"
+          ob_urgency: >-
+            {{ if eq $labels.severity "Critical" }}HIGH INC{{ else }}MEDIUM INC{{ end }}
         annotations:
-          summary: "{{ $value }} active Critical alerts in OneView"
-          description: "There are {{ $value }} unresolved Critical alerts in HPE OneView."
+          summary: "OneView {{ $labels.severity }} alert on {{ $labels.resource_name }}"
+          description: "{{ $labels.description }}"
+          corrective_action: "{{ $labels.corrective_action }}"
+          resource_category: "{{ $labels.resource_category }}"
+          alert_uri: "{{ $labels.alert_uri }}"
 
       - alert: OneViewEnclosureDegraded
         expr: oneview_enclosure_status >= 2
